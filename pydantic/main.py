@@ -1,6 +1,7 @@
 import warnings
 from abc import ABCMeta
 from copy import deepcopy
+from dataclasses import asdict, is_dataclass
 from enum import Enum
 from functools import partial
 from pathlib import Path
@@ -676,6 +677,9 @@ class BaseModel(Representation, metaclass=ModelMetaclass):
             return cls(**value)
         elif cls.__config__.orm_mode:
             return cls.from_orm(value)
+        elif is_dataclass(value):
+            value_as_dict = asdict(value)
+            return cls(**value_as_dict)
         else:
             try:
                 value_as_dict = dict(value)
